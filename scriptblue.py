@@ -57,6 +57,19 @@ def ActBase(base):
     Add your code here
     
     '''
+    enemy = ["enemy", "enemy-base"]
+    base_location_data = {}
+    base_location_data["up"] = base.investigate_up()
+    base_location_data["down"] = base.investigate_down()
+    base_location_data["left"] = base.investigate_left()
+    base_location_data["right"] = base.investigate_right()
+    base_location_data["nw"] = base.investigate_nw()
+    base_location_data["ne"] = base.investigate_ne()
+    base_location_data["sw"] = base.investigate_sw()
+    base_location_data["se"] = base.investigate_se()
+
+    if ((base_location_data["up"] in enemy) + (base_location_data["down"] in enemy) + (base_location_data["left"] in enemy) + (base_location_data["right"] in enemy) + (base_location_data["ne"] in enemy) + (base_location_data["nw"] in enemy) + (base_location_data["se"] in enemy) + (base_location_data["sw"] in enemy)):
+        base.DeployVirus((base.GetVirus()/4))  #About 250
     if base.GetElixir() > 500:
             p = randint(0,5)
             if p != 0:

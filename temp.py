@@ -54,7 +54,6 @@ def randoCircleACW(initPos, basePos):
 
 def ActRobot(robot):
     enemy = ["enemy", "enemy-base"]
-    enemy_base = ["enemy-base"]
 
     # Get data about neighbouring cells
     location_data = {}
@@ -71,11 +70,7 @@ def ActRobot(robot):
 
     # Check if there is an enemy bot or base near it and deploy virus
     if (((location_data["up"] in enemy)+(location_data["down"] in enemy)+(location_data["left"] in enemy)+(location_data["right"] in enemy)+(location_data["ne"] in enemy)+(location_data["nw"] in enemy)+(location_data["se"] in enemy)+(location_data["sw"] in enemy))):
-        robot.DeployVirus(200 if (robot.GetVirus() >= 1000) else robot.GetVirus()/5) #About 200
-    
-    #Deal extra damage for enemy base
-    if (((location_data["up"] in enemy_base)+(location_data["down"] in enemy_base)+(location_data["left"] in enemy_base)+(location_data["right"] in enemy_base)+(location_data["ne"] in enemy_base)+(location_data["nw"] in enemy_base)+(location_data["se"] in enemy_base)+(location_data["sw"] in enemy_base))):
-        robot.DeployVirus(200 if (robot.GetVirus() >= 1000) else robot.GetVirus()/5) #About 200
+        robot.DeployVirus(300)
 
     Initsig = robot.GetInitialSignal()
     sig = Initsig
@@ -110,29 +105,19 @@ def ActRobot(robot):
 
     #Check base signal for attacker signal
     base_sig = robot.GetCurrentBaseSignal()
-    if (len(base_sig) > 0 and base_sig[0] == "a" and robot.GetElixir() >= 125):
+    if (len(base_sig) > 0 and base_sig[0] == "a"):
         sig = base_sig
 
     robot.setSignal(sig)
-    if(Initsig[0:2] == "Rd"):
-        if abs(robx-int(Initsig[2:4])) > 4:
-            return (4 if robx-int(Initsig[2:4]) > 0 else 2)
-        if abs(roby-int(Initsig[4:6])) > 4:
-            return (1 if roby-int(Initsig[4:6]) > 0 else 3)
+    if(Initsig[0] == "R"):
+        if abs(robx-int(Initsig[1:3]))>3 :
+            return (4 if robx-int(Initsig[1:3]) > 0 else 2)
+        if abs(roby-int(Initsig[3:5]))>3:
+            return (1 if roby-int(Initsig[3:5]) > 0 else 3)
         else:
-            return randoCircleCW(location_data["self_coor"], (int(Initsig[2:4]) - 1, int(Initsig[4:6]) + 1))
-    if(sig[0:2] == "Ra"):
-        if abs(robx-int(Initsig[2:4])) > 5:
-            return (4 if robx-int(Initsig[2:4]) > 0 else 2)
-        if abs(roby-int(Initsig[4:6])) > 5:
-            return (1 if roby-int(Initsig[4:6]) > 0 else 3)
-        else:    
-            return randoCircleACW(location_data["self_coor"], (int(Initsig[2:4]) + 1, int(Initsig[4:6]) - 1))
+            return randoCircleACW(location_data["self_coor"], (int(Initsig[1:3]) - 1, int(Initsig[3:5]) - 1))
     if(sig[0] == "r"):
-        if (sig[1] == "a"):
-            return randoCircleACW(location_data["self_coor"], (robot.GetDimensionX()//2, robot.GetDimensionY()//2))
-        elif (sig[1] == "c"):
-            return randoCircleCW(location_data["self_coor"], (robot.GetDimensionX()//2, robot.GetDimensionY()//2))
+        return randoCircleCW(location_data["self_coor"], (robot.GetDimensionX()//2, robot.GetDimensionY()//2))
     elif(sig[0] == "a"):
         return moveTowards(location_data["self_coor"], (int(sig[1:3]), int(sig[3:5])), False)
     else:
@@ -157,20 +142,16 @@ def ActBase(base):
     base_location_data["se"] = base.investigate_se()
 
     if ((base_location_data["up"] in enemy) + (base_location_data["down"] in enemy) + (base_location_data["left"] in enemy) + (base_location_data["right"] in enemy) + (base_location_data["ne"] in enemy) + (base_location_data["nw"] in enemy) + (base_location_data["se"] in enemy) + (base_location_data["sw"] in enemy)):
-        base.DeployVirus((base.GetVirus()/4))  #About 250  
+        base.DeployVirus((base.GetVirus()/4))    
 
     basePos = base.GetPosition()
     baseX = f"{basePos[0]:02d}"
     baseY = f"{basePos[1]:02d}"
 
-    if (base.GetElixir() > 1650):
-        base.create_robot("Rd" + baseX + baseY + "f")
-    if (base.GetElixir() > 1250):
-        base.create_robot("Rd" + baseX + baseY + "f")  
-    if (base.GetElixir() > 950):
-        base.create_robot("ra" + baseX + baseY + "f")      
+    if (base.GetElixir() > 1500):
+        base.create_robot("R" + baseX + baseY + "f")
     if (base.GetElixir() > 500):
-        base.create_robot("rc" + baseX + baseY + "f")
+        base.create_robot("r" + baseX + baseY + "f")
         return
 
     # Get all signals
