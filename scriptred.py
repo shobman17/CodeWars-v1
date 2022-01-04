@@ -134,7 +134,11 @@ def ActRobot(robot):
         elif (sig[1] == "c"):
             return randoCircleCW(location_data["self_coor"], (robot.GetDimensionX()//2, robot.GetDimensionY()//2))
     elif(sig[0] == "a"):
-        return moveTowards(location_data["self_coor"], (int(sig[1:3]), int(sig[3:5])), False)
+        move =  moveTowards(location_data["self_coor"], (int(sig[1:3]), int(sig[3:5])), False)
+        if (move >0): 
+            return move
+        else:
+            return randint(1,4)
     else:
         return moveTowards(location_data["self_coor"], (15, 15))
 
